@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/google/uuid"
 )
 
 func init() {
@@ -22,14 +23,23 @@ type ProductInterface interface {
 
 const (
 	DISABLED = "disabled"
-	ENABLED = "enabled"
+	ENABLED  = "enabled"
 )
 
 type Product struct {
-	ID string `valid:"uuidv4"`
-	Name string `valid:"required"`
-	Price float64 `valid:"float,optional"`
-	Status string `valid:"required"`
+	ID     string  `valid:"uuidv4"`
+	Name   string  `valid:"required"`
+	Price  float64 `valid:"float,optional"`
+	Status string  `valid:"required"`
+}
+
+func NewProduct() *Product {
+	product := Product{
+		ID:     uuid.New().String(),
+		Status: DISABLED,
+	}
+
+	return &product
 }
 
 func (p *Product) IsValid() (bool, error) {
@@ -46,9 +56,9 @@ func (p *Product) IsValid() (bool, error) {
 	}
 
 	_, err := govalidator.ValidateStruct(p)
- if err != nil {
-	return false, err
- }
+	if err != nil {
+		return false, err
+	}
 
 	return true, nil
 }
